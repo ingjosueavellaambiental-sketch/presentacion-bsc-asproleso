@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fase 5 - BSC ASPROLESO (12 Diapositivas)</title>
+    <style>
+        /* RESET Y ESTILOS GENERALES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .presentation-container {
+            width: 1200px;
+            max-width: 100%;
+            height: 750px;
+            max-height: 90vh;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        /* SLIDES */
+        .slides-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 35px 45px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease-in-out;
+            overflow-y: auto;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+        /* SCROLL BAR PERSONALIZADA */
+        .slide::-webkit-scrollbar { width: 6px; }
+        .slide::-webkit-scrollbar-track { background: #f1f5f9; }
+        .slide::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 8px; }
+
+        /* TIPOGRAFÍA */
+        h1 { font-size: 2.6rem; color: #0f172a; margin-bottom: 0.5rem; font-weight: 700; }
+        h2 { font-size: 1.8rem; color: #0f172a; margin-bottom: 1.2rem; font-weight: 600; border-bottom: 4px solid #10b981; padding-bottom: 0.4rem; }
+        h3 { font-size: 1.2rem; color: #1e293b; margin: 0.8rem 0 0.4rem 0; font-weight: 600; }
+        h4 { font-size: 1rem; color: #475569; font-weight: 600; margin: 0.6rem 0 0.2rem 0; }
+        p { font-size: 0.95rem; color: #334155; line-height: 1.5; margin-bottom: 0.6rem; }
+        .text-sm { font-size: 0.85rem; }
+        .text-xs { font-size: 0.75rem; color: #64748b; }
+        .ultra-tiny { font-size: 0.65rem; line-height: 1.3; }
+
+        /* LAYOUTS */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; flex: 1; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; flex: 1; }
+        .flex-col { display: flex; flex-direction: column; flex: 1; }
+        .flex-1 { flex: 1; }
+        .mt-auto { margin-top: auto; }
+
+        /* TARJETAS Y DECORACIONES */
+        .card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 5px solid #10b981;
+            margin-bottom: 0.6rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card-blue { border-left-color: #3b82f6; }
+        .card-purple { border-left-color: #8b5cf6; }
+        .card-amber { border-left-color: #f59e0b; }
+        .card-red { border-left-color: #dc2626; }
+        .tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.15rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.3rem;
+        }
+        .badge-gri { background: #dcfce7; color: #166534; }
+        .badge-ods { background: #fef3c7; color: #92400e; }
+
+        /* GRÁFICOS DE BARRAS (Proyección) - ESCALA PROPORCIONAL */
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 100px;
+            padding: 5px 0;
+            border-bottom: 2px solid #cbd5e1;
+            margin-top: 0.3rem;
+        }
+        .bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 40px;
+        }
+        .bar {
+            width: 30px;
+            background: #10b981;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s;
+            min-height: 4px;
+            position: relative;
+        }
+        .bar-label {
+            font-size: 0.6rem;
+            color: #475569;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .bar-value {
+            font-size: 0.6rem;
+            color: #0f172a;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .bar.bar-1 { background: #94a3b8; }
+        .bar.bar-2 { background: #3b82f6; }
+        .bar.bar-3 { background: #8b5cf6; }
+        .bar.bar-4 { background: #10b981; }
+
+        /* FOOTER / NAVEGACIÓN */
+        .nav-footer {
+            background: #f1f5f9;
+            padding: 10px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+        .nav-btn {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .nav-btn:hover { background: #1e293b; }
+        .nav-btn:disabled { opacity: 0.4; cursor: default; }
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .dot.active { background: #10b981; transform: scale(1.2); }
+        .slide-counter { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .slide { padding: 15px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 0.8rem; }
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.3rem; }
+            .chart-container { height: 80px; }
+            .presentation-container { height: auto; max-height: 95vh; }
+            .bar-wrapper { width: 30px; }
+            .bar { width: 20px; }
+        }
+
+        ul { list-style: none; padding-left: 0; }
+        ul li { padding: 0.2rem 0 0.2rem 1.3rem; position: relative; font-size: 0.9rem; color: #334155; }
+        ul li::before { content: "▹"; color: #10b981; font-weight: bold; position: absolute; left: 0; }
+        .table-mini { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .table-mini td, .table-mini th { border: 1px solid #e2e8f0; padding: 4px 8px; text-align: left; }
+        .table-mini th { background: #f1f5f9; font-weight: 600; color: #0f172a; }
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .gap-1 { gap: 0.5rem; }
+    </style>
+</head>
+<body>
+<div class="presentation-container">
+    <div class="slides-wrapper">
+        <!-- SLIDE 1: PORTADA -->
+        <div class="slide active" data-index="0">
+            <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center;">
+                <div style="background: #10b981; width: 80px; height: 8px; margin: 0 auto 1.5rem auto; border-radius: 4px;"></div>
+                <h1 style="font-size: 3rem; color: #0f172a;">Sistema Integrado de Gestión Estratégica y Sostenibilidad</h1>
+                <h2 style="border: none; color: #10b981; font-size: 1.6rem; margin-bottom: 1.5rem;">Balanced Scorecard con Enfoque en Ecosostenibilidad</h2>
+                <div style="background: #f8fafc; padding: 1.8rem; border-radius: 16px; max-width: 700px; margin: 0 auto;">
+                    <p style="font-size: 1.2rem; font-weight: 600; color: #0f172a;">ASPROLESO</p>
+                    <p style="color: #475569;">Asociación de Productores de Leche del municipio de Sotará</p>
+                    <p style="color: #475569; font-size: 0.9rem;">Cauca, Colombia</p>
+                    <hr style="margin: 0.8rem 0; border-color: #e2e8f0;">
+                    <p style="font-size: 0.95rem; color: #334155;"><strong>Presentado por:</strong> Maria A. Ruiz, Henry G. Olmos, Josué D. Avella</p>
+                    <p style="font-size: 0.85rem; color: #64748b;">Curso: Balanced Scorecard e Indicadores de Ecosostenibilidad - UNAD ECAPMA</p>
+                    <p style="font-size: 0.85rem; color: #64748b;">Tutor: Jorge Enrique Segura | Julio 2026</p>
+                </div>
+                <p style="margin-top: 1.5rem; font-size: 0.8rem; color: #94a3b8;">Fase 5 - Integración y Gestión del Cambio</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: CONTEXTO Y CARACTERIZACIÓN (RA1) -->
+        <div class="slide" data-index="1">
+            <h2>📌 1. Contexto y Caracterización</h2>
+            <div style="display: flex; gap: 1.5rem; height: 85%;">
+                <div style="flex: 1;">
+                    <div class="card">
+                        <h4>ASPROLESO</h4>
+                        <p><strong>Ubicación:</strong> Paispamba, Sotará (Cauca).</p>
+                        <p><strong>Actividad:</strong> Acopio, transformación y comercialización de leche y derivados (yogur, quesos).</p>
+                        <p><strong>Asociados:</strong> 113 productores (47% mujeres jefas de hogar).</p>
+                        <p><strong>CIIU:</strong> 1051 (Elaboración de productos lácteos).</p>
+                        <p><strong>Alcance:</strong> Local y regional. Operación desde 1997.</p>
+                    </div>
+                    <div class="card card-blue">
+                        <h4>Actividad económica principal</h4>
+                        <p>Producción, acopio, transformación y comercialización de leche y derivados (yogur, queso campesino, queso procesado).</p>
+                        <p><strong>Clientes:</strong> Alpina (principal comprador de leche cruda), consumidores locales.</p>
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <div class="card card-purple">
+                        <h4>Reto estratégico (Design Thinking)</h4>
+                        <ul>
+                            <li>Baja participación y apropiación de los asociados.</li>
+                            <li>Dependencia de la venta de leche cruda (Alpina).</li>
+                            <li>Escasa diversificación del portafolio.</li>
+                            <li>Debilidades en comunicación interna.</li>
+                        </ul>
+                    </div>
+                    <div class="card card-amber">
+                        <h4>Enfoque metodológico</h4>
+                        <p><span class="tag">RA1</span> Diagnóstico alineado con Aguilera (2010), Ponce Talancón (2007) y Polanco et al. (2016).</p>
+                        <p class="text-xs">Se aplicaron matrices DOFA, MEFI, MEFE y MAFE para el análisis situacional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: ANÁLISIS ESTRATÉGICO - DOFA, MEFI, MEFE (RA1) -->
+        <div class="slide" data-index="2">
+            <h2>📊 2. Análisis Estratégico (DOFA, MEFI, MEFE)</h2>
+            <div style="display: flex; flex-direction: column; height: 85%;">
+                <div class="grid-2" style="flex: 1;">
+                    <div>
+                        <div class="card">
+                            <h4>Matriz DOFA</h4>
+                            <ul>
+                                <li><strong>F:</strong> Trayectoria, infraestructura, alianzas (UNAD, SENA, ICA).</li>
+                                <li><strong>D:</strong> Dependencia de Alpina, logística artesanal.</li>
+                                <li><strong>O:</strong> Demanda sostenible, créditos verdes.</li>
+                                <li><strong>A:</strong> Cambio climático, competencia de grandes industrias.</li>
+                            </ul>
+                        </div>
+                        <div class="card card-blue">
+                            <h4>Factores críticos de éxito</h4>
+                            <ul>
+                                <li>Aprovechar programas gubernamentales (créditos verdes).</li>
+                                <li>Mitigar variabilidad climática con sistemas de gestión de agua.</li>
+                                <li>Fortalecer la experiencia organizacional y alianzas.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card card-purple">
+                            <h4>Matriz MEFI (Interna)</h4>
+                            <p><strong>Puntaje:</strong> 2.53 (Posición interna favorable).</p>
+                            <p class="text-xs">Fortalezas: infraestructura (0.40), experiencia (0.44). Debilidades: dependencia de Alpina (0.22), costos altos (0.12).</p>
+                        </div>
+                        <div class="card card-amber">
+                            <h4>Matriz MEFE (Externa)</h4>
+                            <p><strong>Puntaje:</strong> 2.75 (Capacidad moderada para responder al entorno).</p>
+                            <p class="text-xs">Oportunidades: nuevos mercados (0.60), alianzas (0.60). Amenazas: dependencia de Alpina (0.15).</p>
+                        </div>
+                        <div style="background: #f1f5f9; padding: 0.5rem; border-radius: 8px; margin-top: 0.3rem;">
+                            <p class="text-xs text-center"><span class="tag">Ponce Talancón, 2007</span> Metodología aplicada para la evaluación estratégica.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: CADENA DE VALOR (RA1) -->
+        <div class="slide" data-index="3">
+            <h2>🔗 3. Cadena de Valor</h2>
+            <div style="display: flex; gap: 1.5rem; height: 85%;">
+                <div style="flex: 1; background: #f8fafc; border-radius: 12px; padding: 1rem; border: 1px solid #e2e8f0;">
+                    <h4 style="text-align: center; color: #0f172a;">Actividades Primarias</h4>
+                    <ul>
+                        <li><strong>Producción:</strong> Recepción, control de calidad, pasteurización, envasado.</li>
+                        <li><strong>Acopio:</strong> 4 rutas (Paispamba, Ullucos, Chapa, Piedra de León).</li>
+                        <li><strong>Transporte:</strong> Artesanal (debilidad crítica en Piedra de León).</li>
+                        <li><strong>Comercialización:</strong> Leche cruda (Alpina) y derivados (mercados locales).</li>
+                        <li><strong>Distribución:</strong> Bodegas refrigeradas.</li>
+                    </ul>
+                    <div style="margin-top: 0.8rem; background: #fee2e2; padding: 0.4rem; border-radius: 8px;">
+                        <p class="text-xs" style="color: #991b1b;"><strong>⚡ Debilidad clave:</strong> Logística en ruta Piedra de León (riesgos de calidad e inocuidad).</p>
+                    </div>
+                </div>
+                <div style="flex: 1; background: #f8fafc; border-radius: 12px; padding: 1rem; border: 1px solid #e2e8f0;">
+                    <h4 style="text-align: center; color: #0f172a;">Actividades de Apoyo</h4>
+                    <ul>
+                        <li><strong>Gestión:</strong> Junta Directiva, alta carga administrativa.</li>
+                        <li><strong>Insumos:</strong> Tienda comunitaria (insumos agropecuarios).</li>
+                        <li><strong>Asistencia Técnica:</strong> ICA (BPG), inseminación artificial.</li>
+                        <li><strong>Capacitación:</strong> Liderazgo, producción higiénica.</li>
+                        <li><strong>Ambiental:</strong> Enfoque en ecoeficiencia y sostenibilidad.</li>
+                    </ul>
+                    <div style="margin-top: 0.8rem; background: #dbeafe; padding: 0.4rem; border-radius: 8px;">
+                        <p class="text-xs" style="color: #1e40af;"><span class="tag">GRI 13</span> Aplicación sectorial en agricultura y ganadería.</p>
+                        <p class="text-xs" style="color: #1e40af;"><span class="tag">DNP, 2019</span> Metodología de cadena de valor.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: MISIÓN, VISIÓN Y VALORES (RA2) -->
+        <div class="slide" data-index="4">
+            <h2>🎯 4. Misión, Visión y Valores</h2>
+            <div style="display: flex; flex-direction: column; height: 85%;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex: 1;">
+                    <div>
+                        <div class="card" style="border-left-color: #0f172a;">
+                            <h4>Misión</h4>
+                            <p style="font-style: italic; font-size: 0.9rem; color: #0f172a;">"Somos una organización agroindustrial de pequeños productores campesinos e indígenas de Sotará, dedicada al acopio, transformación y comercialización de productos lácteos de alta calidad, que impulsa el desarrollo social y económico de sus asociados mediante procesos sostenibles, innovadores y con alto compromiso con la seguridad alimentaria y la preservación ambiental."</p>
+                            <p class="text-xs"><span class="tag">GRI 13</span> <span class="tag">ODS 2, 8</span></p>
+                        </div>
+                        <div class="card" style="border-left-color: #0f172a; margin-top: 0.3rem;">
+                            <h4>Visión (2030)</h4>
+                            <p style="font-style: italic; font-size: 0.9rem; color: #0f172a;">"ASPROLESO será reconocida como el referente regional líder del sector lácteo en el Cauca, destacándose por su innovación tecnológica, la diversificación competitiva de su portafolio y un modelo asociativo ejemplar que garantiza la rentabilidad integral y la resiliencia climática de sus sistemas productivos."</p>
+                            <p class="text-xs"><span class="tag">ODS 12, 13</span> (Kaplan & Norton, 2004)</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Valores Corporativos</h4>
+                        <ul>
+                            <li><strong>Solidaridad y Asociatividad:</strong> Apoyo mutuo entre 113 asociados.</li>
+                            <li><strong>Sostenibilidad Integral:</strong> Equilibrio económico, social y ambiental (GRI 303, 305, 306).</li>
+                            <li><strong>Innovación y Calidad:</strong> Mejora continua e inocuidad.</li>
+                            <li><strong>Transparencia y Buen Gobierno:</strong> Toma de decisiones clara.</li>
+                            <li><strong>Responsabilidad y Equidad:</strong> Inclusión de mujeres (47%) y condiciones justas (GRI 403, 414).</li>
+                        </ul>
+                        <div class="card card-blue" style="margin-top: 0.3rem;">
+                            <p class="text-xs"><strong>Justificación:</strong> Abordan debilidades críticas (baja participación, comunicación) y transforman los objetivos de mejora en principios rectores (Reinoso & Uribe, 2009).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: TEMAS ESTRATÉGICOS (RA2) -->
+        <div class="slide" data-index="5">
+            <h2>🧩 5. Temas Estratégicos</h2>
+            <div style="display: flex; flex-direction: column; height: 85%;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex: 1;">
+                    <div class="card" style="border-left-color: #0f172a;">
+                        <h4>1. Fortalecimiento Organizacional</h4>
+                        <p>Participación, comunicación, gobernanza.</p>
+                        <p class="text-xs"><span class="tag">ODS 17</span> <span class="tag">GRI 413</span></p>
+                    </div>
+                    <div class="card card-blue">
+                        <h4>2. Innovación y Diversificación</h4>
+                        <p>Nuevos productos, valor agregado (yogur griego, quesos madurados).</p>
+                        <p class="text-xs"><span class="tag">GRI 13</span> <span class="tag">ODS 8</span></p>
+                    </div>
+                    <div class="card card-purple">
+                        <h4>3. Modernización Tecnológica</h4>
+                        <p>Digitalización, eficiencia logística, optimización de rutas.</p>
+                        <p class="text-xs"><span class="tag">ODS 9</span> <span class="tag">GRI 404</span></p>
+                    </div>
+                    <div class="card card-amber">
+                        <h4>4. Sostenibilidad Integral</h4>
+                        <p>Resiliencia climática, economía circular (lactosuero, residuos).</p>
+                        <p class="text-xs"><span class="tag">GRI 303, 306</span> <span class="tag">ODS 12, 13</span></p>
+                    </div>
+                </div>
+                <div style="background: #f1f5f9; padding: 0.5rem; border-radius: 8px; margin-top: 0.3rem;">
+                    <p class="text-xs text-center">Cada tema estratégico cuenta con 3 objetivos (12 en total) distribuidos en las 4 perspectivas del BSC (Kaplan & Norton, 1996).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: MAPA ESTRATÉGICO (RA2) -->
+        <div class="slide" data-index="6">
+            <h2>🗺️ 6. Mapa Estratégico y Relaciones Causa‑Efecto</h2>
+            <div style="display: flex; flex-direction: column; height: 85%;">
+                <div style="background: #f1f5f9; padding: 1rem; border-radius: 12px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <h4 style="text-align: center;">Relaciones Causa-Efecto (Kaplan & Norton, 2004)</h4>
+                    <div style="display: flex; justify-content: space-around; align-items: center; text-align: center; font-size: 0.9rem; gap: 0.5rem; flex-wrap: wrap; padding: 0.5rem 0;">
+                        <div><span style="background: #0f172a; color: white; padding: 4px 14px; border-radius: 20px;">Aprendizaje</span> ⬆️</div>
+                        <div><span style="background: #3b82f6; color: white; padding: 4px 14px; border-radius: 20px;">Procesos</span> ⬆️</div>
+                        <div><span style="background: #10b981; color: white; padding: 4px 14px; border-radius: 20px;">Clientes</span> ⬆️</div>
+                        <div><span style="background: #f59e0b; color: white; padding: 4px 14px; border-radius: 20px;">Financiera</span></div>
+                    </div>
+                    <div style="background: #ffffff; padding: 0.8rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <p class="text-sm text-center"><strong>Lógica del mapa:</strong> Capacitación y certificación (Aprendizaje) → Estandarización y optimización (Procesos) → Sostenibilidad de Origen (Clientes) → Rentabilidad y cofinanciación (Financiera).</p>
+                        <p class="text-xs text-center"><span class="tag">Espino‑Valdés et al., 2015</span> Se integra la quinta perspectiva de sostenibilidad ambiental.</p>
+                    </div>
+                </div>
+                <div style="background: #dbeafe; padding: 0.3rem; border-radius: 6px; margin-top: 0.3rem; text-align: center;">
+                    <p class="text-xs">El mapa fue configurado en BSC Designer® con vínculos visibles entre objetivos e indicadores.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: PROYECCIÓN Y GRÁFICOS -->
+        <div class="slide" data-index="7">
+            <h2>📊 7. Proyección a 4 Años (2026-2029)</h2>
+            <div style="display: flex; flex-direction: column; height: 85%; gap: 0.4rem;">
+                <!-- Tabla de valores -->
+                <div style="background: #f8fafc; border-radius: 8px; padding: 0.4rem; border: 1px solid #e2e8f0;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem; text-align: center;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="padding: 3px;">KPI</th>
+                                <th style="padding: 3px;">2026</th>
+                                <th style="padding: 3px;">2027</th>
+                                <th style="padding: 3px;">2028</th>
+                                <th style="padding: 3px;">2029</th>
+                                <th style="padding: 3px;">ODS/GRI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="padding: 3px;"><strong>Lactosuero</strong></td><td>20%</td><td>60%</td><td>70%</td><td>90%</td><td>ODS 12, GRI 306</td></tr>
+                            <tr><td style="padding: 3px;"><strong>Costos</strong></td><td>5%</td><td>30%</td><td>45%</td><td>40%</td><td>ODS 8, GRI 201</td></tr>
+                            <tr><td style="padding: 3px;"><strong>BPG</strong></td><td>5%</td><td>60%</td><td>80%</td><td>85%</td><td>ODS 15, GRI 414</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Gráficos de barras escalados (altura máxima 100px) -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; flex: 1;">
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 0.4rem; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                        <h4 style="text-align: center; font-size: 0.75rem;">Lactosuero</h4>
+                        <div style="display: flex; justify-content: space-around; align-items: flex-end; height: 100px; padding: 0.2rem 0;">
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 20px; width: 25px; background: #94a3b8; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">20%</span>
+                                <span style="font-size: 0.5rem;">2026</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 60px; width: 25px; background: #3b82f6; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">60%</span>
+                                <span style="font-size: 0.5rem;">2027</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 70px; width: 25px; background: #8b5cf6; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">70%</span>
+                                <span style="font-size: 0.5rem;">2028</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 90px; width: 25px; background: #10b981; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">90%</span>
+                                <span style="font-size: 0.5rem;">2029</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-center" style="margin-top: 0.1rem; font-size: 0.6rem;">+70% en 4 años</p>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 0.4rem; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                        <h4 style="text-align: center; font-size: 0.75rem;">Reducción Costos</h4>
+                        <div style="display: flex; justify-content: space-around; align-items: flex-end; height: 100px; padding: 0.2rem 0;">
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 5px; width: 25px; background: #94a3b8; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">5%</span>
+                                <span style="font-size: 0.5rem;">2026</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 30px; width: 25px; background: #3b82f6; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">30%</span>
+                                <span style="font-size: 0.5rem;">2027</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 45px; width: 25px; background: #8b5cf6; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">45%</span>
+                                <span style="font-size: 0.5rem;">2028</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 40px; width: 25px; background: #f59e0b; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">40%</span>
+                                <span style="font-size: 0.5rem;">2029</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-center" style="margin-top: 0.1rem; font-size: 0.6rem;">+35% (rezago en 2029)</p>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 0.4rem; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+                        <h4 style="text-align: center; font-size: 0.75rem;">Procesos Estandarizados (BPG)</h4>
+                        <div style="display: flex; justify-content: space-around; align-items: flex-end; height: 100px; padding: 0.2rem 0;">
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 5px; width: 25px; background: #94a3b8; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">5%</span>
+                                <span style="font-size: 0.5rem;">2026</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 60px; width: 25px; background: #3b82f6; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">60%</span>
+                                <span style="font-size: 0.5rem;">2027</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 80px; width: 25px; background: #8b5cf6; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">80%</span>
+                                <span style="font-size: 0.5rem;">2028</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; width: 35px;">
+                                <div style="height: 85px; width: 25px; background: #10b981; border-radius: 4px 4px 0 0;"></div>
+                                <span style="font-size: 0.55rem; font-weight: 600;">85%</span>
+                                <span style="font-size: 0.5rem;">2029</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-center" style="margin-top: 0.1rem; font-size: 0.6rem;">+80% en 4 años</p>
+                    </div>
+                </div>
+                <div style="background: #f1f5f9; padding: 0.2rem; border-radius: 6px; text-align: center;">
+                    <p class="text-xs" style="margin: 0; font-size: 0.6rem;"><span class="tag">Datos extraídos del informe Excel exportado desde BSC Designer®</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: ANÁLISIS DE ESCENARIOS Y GESTIÓN DEL CAMBIO (TÍTULO ACTUALIZADO) -->
+        <div class="slide" data-index="8">
+            <h2>📉 8. Análisis de Escenarios y Gestión del Cambio</h2> <!-- CAMBIO APLICADO: SE ELIMINÓ "(Paso 2)" -->
+            <div style="display: flex; flex-direction: column; height: 85%; gap: 0.3rem;">
+                <!-- Interpretación y brechas -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; flex: 1;">
+                    <div style="background: #fef3c7; border-radius: 8px; padding: 0.5rem; border-left: 4px solid #f59e0b;">
+                        <h4 style="font-size: 0.8rem; margin: 0;">📊 Interpretación de resultados</h4>
+                        <ul style="font-size: 0.65rem; padding-left: 1rem; margin: 0.2rem 0;">
+                            <li><strong>Ambiental (ODS 12/13):</strong> Lactosuero +70% (20→90%) y BPG +80% (5→85%). Logro destacado, pero el rezago en costos (40% vs meta del 15% de reducción) indica que la inversión tecnológica debe acelerarse para 2027-2028.</li>
+                            <li><strong>Social (ODS 5/8):</strong> Participación asociativa (35% actual) y certificación de personal (25% actual) presentan brechas iniciales críticas. La resistencia cultural (Cornejo, 2019) y la dependencia de Alpina son los principales desafíos.</li>
+                            <li><strong>Financiero (GRI 201):</strong> La reducción de costos operativos solo alcanza el 40% en 2029, lejos del 15% de reducción neta esperada, debido a retrasos en la modernización de equipos (Iniciativa 2).</li>
+                        </ul>
+                    </div>
+                    <div style="background: #fee2e2; border-radius: 8px; padding: 0.5rem; border-left: 4px solid #dc2626;">
+                        <h4 style="font-size: 0.8rem; margin: 0;">⚠️ Brechas y rezagos críticos</h4>
+                        <ul style="font-size: 0.65rem; padding-left: 1rem; margin: 0.2rem 0;">
+                            <li><strong>Brecha 1:</strong> Costos operativos (40% vs 15% de reducción esperada). Causa: retraso en paneles solares y equipos eficientes.</li>
+                            <li><strong>Brecha 2:</strong> Participación asociativa (35% vs 65% meta). Causa: resistencia cultural y comunicación interna débil.</li>
+                            <li><strong>Brecha 3:</strong> Certificación de personal (25% vs 100% meta). Causa: falta de alianzas con SENA y UNAD en el primer año.</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Medidas de gestión del cambio -->
+                <div style="background: #dcfce7; border-radius: 8px; padding: 0.5rem; border-left: 4px solid #10b981; flex: 1;">
+                    <h4 style="font-size: 0.8rem; margin: 0;">🛠️ Medidas de gestión del cambio (Cornejo, 2019)</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; font-size: 0.65rem; margin-top: 0.2rem;">
+                        <div>
+                            <p style="margin: 0.1rem 0;"><strong>1. Implicación subjetiva:</strong> Implementar la "Escuela de Liderazgo" (Iniciativa 9, $10M) para involucrar a los 113 asociados, especialmente mujeres (47%), transformando modelos mentales paternalistas.</p>
+                            <p style="margin: 0.1rem 0;"><strong>2. Plan de choque tecnológico:</strong> Adelantar la Iniciativa 2 (modernización de equipos, $50M) al segundo semestre de 2027 para reducir la brecha de costos.</p>
+                        </div>
+                        <div>
+                            <p style="margin: 0.1rem 0;"><strong>3. Fortalecimiento cultural:</strong> Medición de clima organizacional (Reinoso & Uribe, 2009) semestral para monitorear la adopción de la cultura de sostenibilidad.</p>
+                            <p style="margin: 0.1rem 0;"><strong>4. Comunicación estratégica:</strong> Campaña interna sobre beneficios del BSC (transparencia, acceso a créditos verdes) para mitigar la resistencia al cambio.</p>
+                        </div>
+                    </div>
+                    <div style="background: #f1f5f9; padding: 0.2rem; border-radius: 4px; margin-top: 0.2rem; text-align: center;">
+                        <p class="ultra-tiny" style="margin: 0;"><strong>Conclusión del escenario:</strong> Se proyecta un cumplimiento del 80-90% de metas al 2029. Las brechas se concentran en la velocidad de adopción tecnológica y cultural, requiriendo un liderazgo participativo y una gestión de cambio gradual pero firme.</p>
+                    </div>
+                </div>
+                <div style="background: #dbeafe; padding: 0.2rem; border-radius: 4px; text-align: center;">
+                    <p class="text-xs" style="margin: 0; font-size: 0.6rem;"><span class="tag">ODS 5, 8, 12, 13, 15</span> <span class="tag">GRI 201, 306, 414</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: MEDIDAS DE GESTIÓN DEL CAMBIO (RA3) - PROFUNDIZACIÓN -->
+        <div class="slide" data-index="9">
+            <h2>🔄 9. Gestión del Cambio - Profundización</h2>
+            <div style="display: flex; flex-direction: column; height: 85%;">
+                <div class="grid-2" style="flex: 1;">
+                    <div>
+                        <div class="card card-red">
+                            <h4>Barreras identificadas</h4>
+                            <ul>
+                                <li><strong>Cultural:</strong> Resistencia a la medición sistemática (experiencia empírica).</li>
+                                <li><strong>Tecnológica:</strong> Debilidades en digitalización y gestión documental.</li>
+                                <li><strong>Liderazgo:</strong> Modelo paternalista, falta de participación activa.</li>
+                            </ul>
+                            <p class="text-xs"><span class="tag">Cornejo, 2019</span> "Implicación subjetiva" como eje central del cambio.</p>
+                        </div>
+                        <div class="card card-amber" style="border-left-color: #f59e0b;">
+                            <h4>Enfoque en Cultura Organizacional</h4>
+                            <p><strong>Reinoso & Uribe (2009):</strong> Los indicadores no son neutros; moldean la cultura cuando son apropiados por los actores.</p>
+                            <p style="margin-top: 0.3rem;"><strong>Cornejo (2019):</strong> El cambio requiere involucramiento emocional y cognitivo, no solo técnico.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="card card-blue">
+                            <h4>Plan de Acción (5 pasos)</h4>
+                            <ul>
+                                <li><strong>1.</strong> Estudio del modelo mental de líderes (entrevistas y talleres).</li>
+                                <li><strong>2.</strong> Campaña de comunicación estratégica (beneficios del BSC).</li>
+                                <li><strong>3.</strong> Escuela de Liderazgo y Gobernanza (iniciativa 9 - $10M).</li>
+                                <li><strong>4.</strong> Medición de clima organizacional (encuestas antes/durante/después).</li>
+                                <li><strong>5.</strong> Comité de Sostenibilidad (revisión mensual y ciclo PDCA).</li>
+                            </ul>
+                        </div>
+                        <div style="background: #ecfdf5; padding: 0.5rem; border-radius: 8px; border-left: 5px solid #10b981; margin-top: 0.3rem;">
+                            <p class="text-xs"><strong>Empoderamiento femenino:</strong> 47% de asociadas son mujeres jefas de hogar. La Escuela de Liderazgo tiene enfoque en inclusión y equidad de género.</p>
+                            <p class="text-xs"><span class="tag">ODS 5</span> <span class="tag">GRI 403</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: ALINEACIÓN ODS Y GRI -->
+        <div class="slide" data-index="10">
+            <h2>🌍 10. Alineación con ODS y GRI Standards</h2>
+            <div style="display: flex; flex-direction: column; height: 85%;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex: 1;">
+                    <div>
+                        <h4 style="color: #0f172a;">📌 Objetivos de Desarrollo Sostenible</h4>
+                        <ul>
+                            <li><strong>ODS 2:</strong> Hambre Cero (BPG, seguridad alimentaria).</li>
+                            <li><strong>ODS 4:</strong> Educación (Capacitación técnica).</li>
+                            <li><strong>ODS 5:</strong> Igualdad de Género (47% mujeres).</li>
+                            <li><strong>ODS 8:</strong> Trabajo Decente (Diversificación).</li>
+                            <li><strong>ODS 12:</strong> Consumo Responsable (Economía circular).</li>
+                            <li><strong>ODS 13:</strong> Acción por el Clima (Eficiencia energética).</li>
+                            <li><strong>ODS 15:</strong> Vida de Ecosistemas (Conservación).</li>
+                            <li><strong>ODS 17:</strong> Alianzas (SENA, ICA, UNAD).</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #0f172a;">📋 Estándares GRI Aplicados</h4>
+                        <ul>
+                            <li><strong>GRI 201:</strong> Desempeño económico (cofinanciación).</li>
+                            <li><strong>GRI 303:</strong> Agua (gestión en planta).</li>
+                            <li><strong>GRI 305:</strong> Emisiones (paneles solares).</li>
+                            <li><strong>GRI 306:</strong> Residuos (lactosuero).</li>
+                            <li><strong>GRI 404:</strong> Formación (certificaciones).</li>
+                            <li><strong>GRI 413:</strong> Comunidades locales (desarrollo territorial).</li>
+                            <li><strong>GRI 414:</strong> Proveedores (BPG, evaluación social).</li>
+                            <li><strong>GRI 13:</strong> Sectorial Agricultura (obligatorio).</li>
+                        </ul>
+                        <div style="background: #f1f5f9; padding: 0.3rem; border-radius: 6px; margin-top: 0.3rem;">
+                            <p class="text-xs"><span class="tag">Resolución 667 de 2016</span> Indicadores mínimos ambientales (Ministerio de Ambiente).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: CONCLUSIONES Y REFERENCIAS -->
+        <div class="slide" data-index="11">
+            <h2>✅ 11. Conclusiones y Referencias</h2>
+            <div style="display: flex; flex-direction: column; height: 85%;">
+                <div style="flex: 1; overflow-y: auto;">
+                    <div class="card">
+                        <h4>Conclusiones</h4>
+                        <ul>
+                            <li>Se consolidó un sistema de gestión estratégica (BSC) articulando diagnóstico (RA1), formulación (RA2) e implementación (RA3).</li>
+                            <li>La proyección a 4 años (2026-2029) evidencia mejoras en sostenibilidad: +70% en lactosuero, +80% en BPG, pero con rezago en costos (40%).</li>
+                            <li>La gestión del cambio (Cornejo, 2019) y la cultura organizacional (Reinoso & Uribe, 2009) son los habilitadores clave para la adopción del BSC.</li>
+                            <li>El enlace público al dashboard es funcional y permite el monitoreo continuo.</li>
+                        </ul>
+                    </div>
+                    <div class="card card-blue">
+                        <h4>Referencias (APA 7ª ed.)</h4>
+                        <ul style="font-size: 0.75rem;">
+                            <li>Cornejo, H. (2019). Horizontes Empresariales, 18(1), 57-65.</li>
+                            <li>Espino‑Valdés et al. (2015). Ingeniería Industrial, 36(3), 328-339.</li>
+                            <li>GRI (2021). GRI Standards 2021.</li>
+                            <li>Kaplan, R. S., & Norton, D. P. (2004). Strategy Maps.</li>
+                            <li>Ponce Talancón, H. (2007). Enseñanza e Investigación en Psicología, 12(1), 113-130.</li>
+                            <li>Reinoso, J. F., & Uribe, M. E. (2009). Indicadores de gestión y cultura organizacional.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="background: #f1f5f9; padding: 0.3rem; border-radius: 6px; margin-top: 0.3rem; text-align: center;">
+                    <p class="text-xs"><strong>Enlace BSC Designer:</strong> <a href="https://es.webbsc.com/s/bsc-asproleso-sotara-1412492" target="_blank">https://es.webbsc.com/s/bsc-asproleso-sotara-1412492</a></p>
+                    <p class="text-xs" style="color: #166534;">Enlace público verificado y funcional.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVEGACIÓN -->
+    <div class="nav-footer">
+        <button class="nav-btn" id="prevBtn" disabled>◀ Anterior</button>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="dots" id="dotsContainer"></div>
+            <span class="slide-counter" id="slideCounter">1 / 12</span>
+        </div>
+        <button class="nav-btn" id="nextBtn">Siguiente ▶</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentIndex = 0;
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dotsContainer = document.getElementById('dotsContainer');
+        const slideCounter = document.getElementById('slideCounter');
+
+        // Crear dots
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.dataset.index = i;
+            dot.addEventListener('click', () => goToSlide(i));
+            dotsContainer.appendChild(dot);
+        }
+
+        function updateSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= totalSlides) index = totalSlides - 1;
+            currentIndex = index;
+
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === currentIndex);
+            });
+
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+
+            slideCounter.textContent = `${currentIndex + 1} / ${totalSlides}`;
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === totalSlides - 1;
+        }
+
+        function goToSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+            updateSlide(index);
+        }
+
+        prevBtn.addEventListener('click', () => goToSlide(currentIndex - 1));
+        nextBtn.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+        // Teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
+            if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
+        });
+
+        // Inicializar
+        updateSlide(0);
+    })();
+</script>
+</body>
+</html>
